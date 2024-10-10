@@ -31,9 +31,7 @@ router.post('/login', (req, res, next) => {
         }
     }
     else {
-        console.log("bad user");
-        req.session.errors = "Utilisateur inconnu";
-        res.redirect('/users');
+        badUserError(req, res);
     }
 });
 
@@ -71,6 +69,12 @@ router.post('/add', (req, res, next) => {
 
 module.exports = router;
 
+
+function badUserError(req, res) {
+    console.log("bad user");
+    req.session.errors = "Utilisateur inconnu";
+    res.redirect('/users');
+}
 
 function LogValidators(req) {
     let errors = [];
