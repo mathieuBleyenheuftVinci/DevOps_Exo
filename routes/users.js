@@ -31,7 +31,9 @@ router.post('/login', (req, res, next) => {
         }
     }
     else {
-        badUserError(req, res);
+        console.log("bad user");
+        req.session.errors = "Utilisateur inconnu";
+        res.redirect('/users');
     }
 });
 
@@ -69,6 +71,20 @@ router.post('/add', (req, res, next) => {
 
 module.exports = router;
 
+
+function LogValidators(req) {
+    let errors = [];
+    if (!validator.isLength(req.body.userName, { min: 3, max: 100 })) errors.push("Le nom doit avoir 3 caractères minimum");
+    if (!validator.isAlphanumeric(req.body.userName)) errors.push("Le nom doit contenir uniquement des caractères alphanumériques");
+    if (!validator.isLength(req.body.userFirstname)) errors.push("Le prénom doit avoir 3 caractères minimum");
+    // firstname : alphanumeric + '-'
+    if (!validator.isAlphanumeric(req.body.userFirstname, "fr-FR", { ignore: '-' })) errors.push("Le prénom doit contenir uniquement des caractères alphanumériques");
+    if (!validator.isEmail(req.body.userEmail)) errors.push("L'email entré n'est pas correct !");
+    if (!validator.isStrongPassword(req.body.userPassword, { minLength: 2, minLowercase: 0, minUppercase: 0, minNumbers: 0, minSymbols: 0, returnScore: false })) errors.push("Le mot de passe n'et pas assez fort : 2 caractères minimum, ... !");
+    if (req.body.userPassword != req.body.userPasswordConfirmation) errors.push("Les mot de passes ne correspondent pas");
+    if (User.find(req.body.userEmail)) errors.push("Email/Utilisateur déjà présent en DB");
+    return errors;
+}
 
 function compteDesactive(req, res) {
     req.session.errors = "Compte désactivé";
