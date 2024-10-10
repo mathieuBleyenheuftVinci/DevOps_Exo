@@ -24,8 +24,7 @@ router.post('/login', (req, res, next) => {
     console.log("User found" + JSON.stringify(userFound));
     if (userFound) {
         if (userFound.active == false) {
-            req.session.errors = "Compte désactivé";
-            res.redirect('/users');
+            compteDesactive(req, res);
         }
         else {
             if (bcrypt.compareSync(req.body.userPassword, userFound.password)) {
@@ -96,3 +95,8 @@ router.post('/add', (req, res, next) => {
 });
 
 module.exports = router;
+
+function compteDesactive(req, res) {
+    req.session.errors = "Compte désactivé";
+    res.redirect('/users');
+}
