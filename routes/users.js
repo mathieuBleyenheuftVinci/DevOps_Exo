@@ -53,13 +53,7 @@ router.post('/add', (req, res, next) => {
     // validation 
     let errors = LogValidators(req);
     if (errors.length == 0) {
-        User.save({
-            name: req.body.userName,
-            firstname: req.body.userFirstname,
-            email: req.body.userEmail,
-            password: bcrypt.hashSync(req.body.userPassword, saltRounds)
-        });
-        res.redirect('/users');
+        addNewUsers(req, res);
     }
     else {
         req.session.errors = errors;
@@ -69,6 +63,16 @@ router.post('/add', (req, res, next) => {
 
 module.exports = router;
 
+
+function addNewUsers(req, res) {
+    User.save({
+        name: req.body.userName,
+        firstname: req.body.userFirstname,
+        email: req.body.userEmail,
+        password: bcrypt.hashSync(req.body.userPassword, saltRounds)
+    });
+    res.redirect('/users');
+}
 
 function badUserError(req, res) {
     console.log("bad user");
